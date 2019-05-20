@@ -4,7 +4,7 @@ import Labels from './label.vue';
 new Vue({
   el: '#mail-app',
 
-  components: { Labels },
+  components: {Labels},
 
   template: '<Labels />',
 });

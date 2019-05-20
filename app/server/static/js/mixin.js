@@ -1,9 +1,8 @@
 import * as marked from 'marked';
 import hljs from 'highlight.js';
-import VueJsonPretty from 'vue-json-pretty';
-import isEmpty from 'lodash.isempty';
 import HTTP from './http';
 import Messages from './messages.vue';
+import EventBus from './bus'
 
 const getOffsetFromUrl = (url) => {
   const offsetMatch = url.match(/[?#].*offset=(\d+)/);
@@ -27,8 +26,8 @@ const storeOffsetInUrl = (offset) => {
     const newFragment = fragment.split('&').map((fragmentPart) => {
       const keyValue = fragmentPart.split('=');
       return keyValue[0] === 'offset'
-        ? 'offset=' + offset
-        : fragmentPart;
+          ? 'offset=' + offset
+          : fragmentPart;
     }).join('&');
 
     href = prefix + newFragment;
@@ -38,11 +37,9 @@ const storeOffsetInUrl = (offset) => {
 };
 
 export const annotationMixin = {
-  components: { VueJsonPretty },
-
   data() {
     return {
-      pageNumber: 0,
+      page: 0,
       docs: [],
       annotations: [],
       labels: [],
@@ -54,11 +51,11 @@ export const annotationMixin = {
       offset: getOffsetFromUrl(window.location.href),
       picked: 'all',
       count: 0,
-      isMetadataActive: false,
-      isAnnotationGuidelineActive: false,
+      isActive: false,
+      existingTags:{},
+      oldTags:[]
     };
   },
-
   methods: {
     async nextPage() {
       this.pageNumber += 1;
@@ -84,6 +81,7 @@ export const annotationMixin = {
           this.pageNumber = 0;
         }
       }
+
     },
 
     async search() {
@@ -98,6 +96,7 @@ export const annotationMixin = {
           this.annotations.push(doc.annotations);
         }
         this.offset = getOffsetFromUrl(this.url);
+        this.setAnnotations()
       });
     },
 
@@ -164,6 +163,7 @@ export const annotationMixin = {
   created() {
     HTTP.get('labels').then((response) => {
       this.labels = response.data;
+      this.setTags()
     });
     HTTP.get().then((response) => {
       this.guideline = response.data.guideline;
@@ -172,6 +172,16 @@ export const annotationMixin = {
   },
 
   computed: {
+
+    pageNumber:{
+        set: function(n) {
+          this.page = n;
+          this.setAnnotations();
+        },
+        get: function() {
+          return this.page;
+        }
+    },
     achievement() {
       const done = this.total - this.remaining;
       const percentage = Math.round(done / this.total * 100);
@@ -182,20 +192,6 @@ export const annotationMixin = {
       return marked(this.guideline, {
         sanitize: true,
       });
-    },
-
-    documentMetadata() {
-      const document = this.docs[this.pageNumber];
-      if (document == null || document.meta == null) {
-        return null;
-      }
-
-      const metadata = JSON.parse(document.meta);
-      if (isEmpty(metadata)) {
-        return null;
-      }
-
-      return metadata;
     },
 
     id2label() {
@@ -220,7 +216,7 @@ export const annotationMixin = {
 };
 
 export const uploadMixin = {
-  components: { Messages },
+  components: {Messages},
 
   data: () => ({
     file: '',
@@ -241,27 +237,27 @@ export const uploadMixin = {
       formData.append('file', this.file);
       formData.append('format', this.format);
       HTTP.post('docs/upload',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then((response) => {
-          console.log(response); // eslint-disable-line no-console
-          this.messages = [];
-          window.location = window.location.pathname.split('/').slice(0, -1).join('/');
-        })
-        .catch((error) => {
-          this.isLoading = false;
-          this.handleError(error);
-        });
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }).then((response) => {
+        console.log(response); // eslint-disable-line no-console
+        this.messages = [];
+        window.location = window.location.pathname.split('/').
+            slice(0, -1).
+            join('/');
+      }).catch((error) => {
+        this.isLoading = false;
+        this.handleError(error);
+      });
     },
 
     handleError(error) {
       const problems = Array.isArray(error.response.data)
-        ? error.response.data
-        : [error.response.data];
+          ? error.response.data
+          : [error.response.data];
 
       problems.forEach((problem) => {
         if ('detail' in problem) {
@@ -273,7 +269,6 @@ export const uploadMixin = {
     },
 
     download() {
-      this.isLoading = true;
       const headers = {};
       if (this.format === 'csv') {
         headers.Accept = 'text/csv; charset=utf-8';
@@ -296,10 +291,8 @@ export const uploadMixin = {
         link.href = url;
         link.setAttribute('download', 'file.' + this.format); // or any other extension
         document.body.appendChild(link);
-        this.isLoading = false;
         link.click();
       }).catch((error) => {
-        this.isLoading = false;
         this.handleError(error);
       });
     },

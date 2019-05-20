@@ -4,7 +4,7 @@ import Stats from './stats.vue';
 new Vue({
   el: '#mail-app',
 
-  components: { Stats },
+  components: {Stats},
 
   template: '<Stats />',
 });

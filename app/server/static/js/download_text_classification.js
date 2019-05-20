@@ -4,7 +4,7 @@ import DownloadTextClassification from './download_text_classification.vue';
 new Vue({
   el: '#mail-app',
 
-  components: { DownloadTextClassification },
+  components: {DownloadTextClassification},
 
   template: '<DownloadTextClassification />',
 });

@@ -7,7 +7,7 @@ Vue.use(vueDebounce);
 new Vue({
   el: '#mail-app',
 
-  components: { Guideline },
+  components: {Guideline},
 
   template: '<Guideline />',
 });

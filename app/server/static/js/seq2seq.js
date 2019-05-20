@@ -6,7 +6,7 @@ Vue.use(require('vue-shortkey'));
 new Vue({
   el: '#mail-app',
 
-  components: { Seq2Seq },
+  components: {Seq2Seq},
 
   template: '<Seq2Seq />',
 });

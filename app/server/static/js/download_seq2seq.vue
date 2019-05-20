@@ -1,41 +1,41 @@
 <template lang="pug">
-extends ./download.pug
+  extends ./download.pug
 
-block select-format-area
-  label.radio
-    input(
+  block select-format-area
+    label.radio
+      input(
       type="radio"
       name="format"
       value="csv"
       v-bind:checked="format == 'csv'"
       v-model="format"
-    )
-    | CSV
+      )
+      | CSV
 
-  label.radio
-    input(
+    label.radio
+      input(
       type="radio"
       name="format"
       value="json"
       v-bind:checked="format == 'json'"
       v-model="format"
-    )
-    | JSONL
+      )
+      | JSONL
 
-block example-format-area
-  pre.code-block(v-show="format == 'csv'")
-    code.csv
-      include ./examples/download_seq2seq.csv
-      | ...
+  block example-format-area
+    pre.code-block(v-show="format == 'csv'")
+      code.csv
+        include ./examples/download_seq2seq.csv
+        | ...
 
-  pre.code-block(v-show="format == 'json'")
-    code.json
-      include ./examples/download_seq2seq.jsonl
-      | ...
+    pre.code-block(v-show="format == 'json'")
+      code.json
+        include ./examples/download_seq2seq.jsonl
+        | ...
 </template>
 
 <script>
-import { uploadMixin } from './mixin';
+  import {uploadMixin} from './mixin';
 
-export default uploadMixin;
+  export default uploadMixin;
 </script>

@@ -8,7 +8,7 @@ Vue.use(require('vue-shortkey'), {
 new Vue({
   el: '#mail-app',
 
-  components: { SequenceLabeling },
+  components: {SequenceLabeling},
 
   template: '<SequenceLabeling />',
 });

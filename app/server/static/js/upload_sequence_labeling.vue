@@ -1,46 +1,46 @@
 <template lang="pug">
-extends ./upload.pug
+  extends ./upload.pug
 
-block select-format-area
-  label.radio
-    input(
+  block select-format-area
+    label.radio
+      input(
       type="radio"
       name="format"
       value="conll"
       v-bind:checked="format == 'conll'"
       v-model="format"
-    )
-    | CoNLL
+      )
+      | CoNLL
 
-  label.radio
-    input(
+    label.radio
+      input(
       type="radio"
       name="format"
       value="json"
       v-bind:checked="format == 'json'"
       v-model="format"
-    )
-    | JSONL
+      )
+      | JSONL
 
-block example-format-area
-  pre.code-block(v-show="format == 'plain'")
-    code.plaintext
-      include ./examples/upload_sequence_labeling.txt
-      | ...
+  block example-format-area
+    pre.code-block(v-show="format == 'plain'")
+      code.plaintext
+        include ./examples/upload_sequence_labeling.txt
+        | ...
 
-  pre.code-block(v-show="format == 'conll'")
-    code.plaintext
-      include ./examples/upload_sequence_labeling.conll
-      | ...
+    pre.code-block(v-show="format == 'conll'")
+      code.plaintext
+        include ./examples/upload_sequence_labeling.conll
+        | ...
 
-  pre.code-block(v-show="format == 'json'")
-    code.json
-      include ./examples/upload_sequence_labeling.jsonl
-      | ...
+    pre.code-block(v-show="format == 'json'")
+      code.json
+        include ./examples/upload_sequence_labeling.jsonl
+        | ...
 </template>
 
 <script>
-import { uploadMixin } from './mixin';
+  import {uploadMixin} from './mixin';
 
-export default uploadMixin;
+  export default uploadMixin;
 </script>

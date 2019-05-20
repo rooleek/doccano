@@ -7,12 +7,12 @@
 </template>
 
 <script>
-export default {
-  props: {
-    messages: {
-      type: Array,
-      default: () => [],
+  export default {
+    props: {
+      messages: {
+        type: Array,
+        default: () => [],
+      },
     },
-  },
-};
+  };
 </script>

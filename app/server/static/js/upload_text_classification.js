@@ -4,7 +4,7 @@ import UploadTextClassification from './upload_text_classification.vue';
 new Vue({
   el: '#mail-app',
 
-  components: { UploadTextClassification },
+  components: {UploadTextClassification},
 
   template: '<UploadTextClassification />',
 });
